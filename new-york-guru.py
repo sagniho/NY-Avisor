@@ -32,7 +32,7 @@ Key Documents in the Knowledge Base:
 - New York Community Solar Policy Guide for Asset Owners & Developers.pdf: Guidelines for community solar projects. Created by Perch Energy’s internal policy team.
 - NY SUN Long Island + Upstate-Program-Manual.pdf: Program details for NY SUN's initiatives. Published by NYSERDA.
 - NYSEG Queue Order by Substation Updated 03.20.24.pdf: Latest queue order by substation for NYSEG. Published by NYSEG itself.
-- Residential-SC-Program-Manual.pdf: Information on the residential solar credit program. Published by the relevant state agency or local utility.
+- Residential-SC-Program-Manual.pdf: Information on the residential solar credit program.
 """
 
 
