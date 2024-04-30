@@ -6,7 +6,7 @@ import streamlit as st
 import openai
 from uuid import uuid4
 st.secrets["OPENAI_API_KEY"]
-client = OpenAI(api_key=OPENAI_API_KEY)
+client = OpenAI(api_key="OPENAI_API_KEY")
 ASSISTANT_ID = st.secrets["NY_ADVISOR"]
 
 # Create columns for the logo and the title
