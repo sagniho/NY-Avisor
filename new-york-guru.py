@@ -18,7 +18,7 @@ with col1:
 # In the second column, display the title and subtitle
 with col2:
     st.markdown("<h2 style='margin-top: 0;padding-left: 10px;'> NY Solar Advisor</h2>", unsafe_allow_html=True)
-    st.markdown("<em><p style='margin-top: 0; padding-left: 10px;'>Your interactive AI-powered guide to Solar policies and incenitives in the state of NY</p></em>", unsafe_allow_html=True)
+    st.markdown("<em><p style='margin-top: 0; padding-left: 10px;'>Your interactive AI-powered guide to Solar policies and incentives in the state of NY</p></em>", unsafe_allow_html=True)
 
 # Information box with AI assistant capabilities and knowledge base
 info_text = """
