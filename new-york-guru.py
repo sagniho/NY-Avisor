@@ -17,12 +17,12 @@ with col1:
 
 # In the second column, display the title and subtitle
 with col2:
-    st.markdown("<h2 style='margin-top: 0;padding-left: 10px;'> NY Advisor</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 style='margin-top: 0;padding-left: 10px;'> NY Solar Advisor</h2>", unsafe_allow_html=True)
     st.markdown("<em><p style='margin-top: 0; padding-left: 10px;'>Your interactive AI-powered guide to Solar policies and incenitives in the state of NY</p></em>", unsafe_allow_html=True)
 
 # Information box with AI assistant capabilities and knowledge base
 info_text = """
-GPT-4 LLM: This AI assistant leverages GPT-4 technology with a knowledge cutoff in April 2024 to provide expert guidance on solar energy policies and incentives in New York. It integrates detailed document analysis for tailored, strategic advice.
+This AI assistant leverages GPT-4 technology with a knowledge cutoff in April 2024 to provide expert guidance on solar energy policies and incentives in New York. It integrates detailed document analysis for tailored, strategic advice.
 
 Key Documents in the Knowledge Base:
 - 2024 Solar and Wind Tax Model.pdf: Guidance on tax models for solar and wind projects. Published by the New York State Tax Department.
