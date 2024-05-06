@@ -73,27 +73,29 @@ def main():
 
     for msg in st.session_state.messages:
         if msg['role'] == 'user':
-            st.chat_message(msg["content"], avatar="🧑‍💻", key=f"user_{msg['time']}")
+            with st.chat_message("user", avatar="🧑‍💻"):
+                st.write(msg["content"])
         else:
-            st.chat_message(msg["content"], avatar="☀️", key=f"assistant_{msg['time']}")
+            with st.chat_message("assistant", avatar="☀️"):
+                st.write(msg["content"])
 
     # Disable input if awaiting response
     if not st.session_state.get('awaiting_response', False):
         user_input = st.chat_input(placeholder="Please ask me your question…", key='new_message')
         if user_input:
             st.session_state['awaiting_response'] = True
-            st.session_state.messages.append({'role': 'user', 'content': user_input, 'time': time.time()})
-            st.experimental_rerun()
-    else:
-        st.info('Please wait, getting your response...')
+            st.session_state.messages.append({'role': 'user', 'content': user_input})
+            with st.chat_message("user", avatar="🧑‍💻"):
+                st.write(user_input)
 
-    # If there is a message to respond to
-    if st.session_state.get('awaiting_response', False):
-        with st.spinner('Working on this for you now...'):
-            response = send_message_get_response(ASSISTANT_ID, st.session_state['messages'][-1]['content'])
-            st.session_state.messages.append({'role': 'assistant', 'content': response, 'time': time.time()})
+            with st.spinner('Working on this for you now...'):
+                response = send_message_get_response(ASSISTANT_ID, user_input)
+                st.session_state.messages.append({'role': 'assistant', 'content': response})
+                with st.chat_message("assistant", avatar="☀️"):
+                    st.write(response)
+                
             st.session_state['awaiting_response'] = False
             st.experimental_rerun()
+
 if __name__ == "__main__":
     main()
-
