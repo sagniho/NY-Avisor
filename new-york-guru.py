@@ -62,16 +62,13 @@ def send_message_get_response(assistant_id, user_message):
             latest_message = messages.data[0]
             text = latest_message.content[0].text.value
             return text
-        elif run.status == "failed":
-            raise RuntimeError(f"Run failed: {run.error}")
-        else:
-            time.sleep(1)  # Wait for 1 second before checking the status again
 
-def main():
+
+
+def main(): 
     # Initialize messages in session state if not present
     if 'thread' not in st.session_state:
         st.session_state['thread'] = client.beta.threads.create().id
-
     # Initialize messages in session state if not present
     if 'messages' not in st.session_state:
         st.session_state['messages'] = []
@@ -85,40 +82,26 @@ def main():
             with st.chat_message("assistant", avatar="☀️"):
                 st.write(msg["content"])
 
-    # Check if a response is being generated
-    if 'generating_response' not in st.session_state:
-        st.session_state['generating_response'] = False
-
     # Chat input for new message
-    user_input = None
-    if not st.session_state['generating_response']:
-        user_input = st.chat_input(placeholder="Please ask me your question…", key="user_input")
+    user_input = st.chat_input(placeholder="Please ask me your question…")
 
     # When a message is sent through the chat input
     if user_input:
         # Append the user message to the session state
         st.session_state['messages'].append({'role': 'user', 'content': user_input})
-
         # Display the user message
         with st.chat_message("user", avatar="🧑‍💻"):
-            st.write(user_input)
-
-        # Set generating_response to True to prevent new questions
-        st.session_state['generating_response'] = True
+                st.write(user_input)
 
         # Get the response from the assistant
         with st.spinner('Working on this for you now...'):
             response = send_message_get_response(ASSISTANT_ID, user_input)
-
-        # Append the response to the session state
-        st.session_state['messages'].append({'role': 'assistant', 'content': response})
-
-        # Display the assistant's response
-        with st.chat_message("assistant", avatar="☀️"):
-            st.write(response)
-
-        # Set generating_response back to False to allow new questions
-        st.session_state['generating_response'] = False
+            # Append the response to the session state
+            st.session_state['messages'].append({'role': 'assistant', 'content': response})
+            # Display the assistant's response
+            with st.chat_message("assistant", avatar="☀️"):
+                st.write(response)
 
 if __name__ == "__main__":
     main()
+
