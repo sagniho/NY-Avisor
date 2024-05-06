@@ -65,10 +65,12 @@ def send_message_get_response(assistant_id, user_message):
 
 
 
-def main(): 
+
+def main():
     # Initialize messages in session state if not present
     if 'thread' not in st.session_state:
         st.session_state['thread'] = client.beta.threads.create().id
+
     # Initialize messages in session state if not present
     if 'messages' not in st.session_state:
         st.session_state['messages'] = []
@@ -82,25 +84,38 @@ def main():
             with st.chat_message("assistant", avatar="☀️"):
                 st.write(msg["content"])
 
+    # Check if a response is being generated
+    if 'generating_response' not in st.session_state:
+        st.session_state['generating_response'] = False
+
     # Chat input for new message
-    user_input = st.chat_input(placeholder="Please ask me your question…")
+    user_input = st.chat_input(placeholder="Please ask me your question…", key="user_input", disabled=st.session_state['generating_response'])
 
     # When a message is sent through the chat input
     if user_input:
         # Append the user message to the session state
         st.session_state['messages'].append({'role': 'user', 'content': user_input})
+
         # Display the user message
         with st.chat_message("user", avatar="🧑‍💻"):
-                st.write(user_input)
+            st.write(user_input)
+
+        # Set generating_response to True to disable the input
+        st.session_state['generating_response'] = True
 
         # Get the response from the assistant
         with st.spinner('Working on this for you now...'):
             response = send_message_get_response(ASSISTANT_ID, user_input)
-            # Append the response to the session state
-            st.session_state['messages'].append({'role': 'assistant', 'content': response})
-            # Display the assistant's response
-            with st.chat_message("assistant", avatar="☀️"):
-                st.write(response)
+
+        # Append the response to the session state
+        st.session_state['messages'].append({'role': 'assistant', 'content': response})
+
+        # Display the assistant's response
+        with st.chat_message("assistant", avatar="☀️"):
+            st.write(response)
+
+        # Set generating_response back to False to enable the input
+        st.session_state['generating_response'] = False
 
 if __name__ == "__main__":
     main()
