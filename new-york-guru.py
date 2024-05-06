@@ -66,9 +66,10 @@ def send_message_get_response(assistant_id, user_message):
 
 
 def main(): 
-    # Initialize the thread in session state if not present
+    # Initialize messages in session state if not present
     if 'thread' not in st.session_state:
         st.session_state['thread'] = client.beta.threads.create().id
+    # Initialize messages in session state if not present
     if 'messages' not in st.session_state:
         st.session_state['messages'] = []
 
@@ -81,22 +82,16 @@ def main():
             with st.chat_message("assistant", avatar="☀️"):
                 st.write(msg["content"])
 
-    # Disable input if a response is pending
-    disable_input = 'waiting' in st.session_state and st.session_state['waiting']
-
     # Chat input for new message
-    user_input = st.text_input("Please ask me your question…", disabled=disable_input)
-    send_button = st.button("Send", disabled=disable_input)
+    user_input = st.chat_input(placeholder="Please ask me your question…")
 
-    if send_button and user_input:
-        # Indicate waiting for response
-        st.session_state['waiting'] = True
-
+    # When a message is sent through the chat input
+    if user_input:
         # Append the user message to the session state
         st.session_state['messages'].append({'role': 'user', 'content': user_input})
         # Display the user message
         with st.chat_message("user", avatar="🧑‍💻"):
-            st.write(user_input)
+                st.write(user_input)
 
         # Get the response from the assistant
         with st.spinner('Working on this for you now...'):
@@ -106,9 +101,6 @@ def main():
             # Display the assistant's response
             with st.chat_message("assistant", avatar="☀️"):
                 st.write(response)
-
-        # Response received, allow new input
-        st.session_state['waiting'] = False
 
 if __name__ == "__main__":
     main()
