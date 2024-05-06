@@ -66,7 +66,6 @@ def send_message_get_response(assistant_id, user_message):
 
 
 def main():
-    st.title("Interactive Document Analyzer")
     if 'thread' not in st.session_state:
         st.session_state['thread'] = client.beta.threads.create().id
     if 'messages' not in st.session_state:
