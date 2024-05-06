@@ -62,9 +62,10 @@ def send_message_get_response(assistant_id, user_message):
             latest_message = messages.data[0]
             text = latest_message.content[0].text.value
             return text
-
-
-
+        elif run.status == "failed":
+            raise RuntimeError(f"Run failed: {run.error}")
+        else:
+            time.sleep(1)  # Wait for 1 second before checking the status again
 
 def main():
     # Initialize messages in session state if not present
@@ -89,7 +90,9 @@ def main():
         st.session_state['generating_response'] = False
 
     # Chat input for new message
-    user_input = st.chat_input(placeholder="Please ask me your question…", key="user_input", disabled=st.session_state['generating_response'])
+    user_input = None
+    if not st.session_state['generating_response']:
+        user_input = st.chat_input(placeholder="Please ask me your question…", key="user_input")
 
     # When a message is sent through the chat input
     if user_input:
@@ -100,7 +103,7 @@ def main():
         with st.chat_message("user", avatar="🧑‍💻"):
             st.write(user_input)
 
-        # Set generating_response to True to disable the input
+        # Set generating_response to True to prevent new questions
         st.session_state['generating_response'] = True
 
         # Get the response from the assistant
@@ -114,9 +117,8 @@ def main():
         with st.chat_message("assistant", avatar="☀️"):
             st.write(response)
 
-        # Set generating_response back to False to enable the input
+        # Set generating_response back to False to allow new questions
         st.session_state['generating_response'] = False
-
 
 if __name__ == "__main__":
     main()
