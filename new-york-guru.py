@@ -25,13 +25,15 @@ info_text = """
 This AI assistant leverages GPT-4 technology with a knowledge cutoff in April 2024 to provide expert guidance on solar energy policies and incentives in New York. It integrates detailed document analysis for tailored, strategic advice.
 
 Key Documents in the Knowledge Base:
-- 2024 Solar and Wind Tax Model.pdf: Guidance on tax models for solar and wind projects. Published by the New York State Tax Department.
-- 2024_Solar_and_Wind_Appraisal_Model_User_Guide.pdf: Details on how to appraise solar and wind projects. Published by the New York State Tax Department.
-- 2024-Gold-Book-Public copy: Comprehensive industry data and standards. Published by NYISO.
-- New York Community Solar Policy Guide for Asset Owners & Developers.pdf: Guidelines for community solar projects. Created by Perch Energy’s internal policy team.
-- NY SUN Long Island + Upstate-Program-Manual.pdf: Program details for NY SUN's initiatives. Published by NYSERDA.
-- NYSEG Queue Order by Substation Updated 03.20.24.pdf: Latest queue order by substation for NYSEG. Published by NYSEG itself.
-- Residential-SC-Program-Manual.pdf: Information on the residential solar credit program.
+- 2024 Solar and Wind Tax Model: Guidance on tax models for solar and wind projects. Published by the New York State Tax Department.
+- 2024_Solar_and_Wind_Appraisal_Model_User_Guide: Details on how to appraise solar and wind projects. Published by the New York State Tax Department.
+- 2024-Gold-Book-Public: Comprehensive industry data and standards. Published by NYISO.
+- New York Community Solar Policy Guide for Asset Owners & Developers: Guidelines for community solar projects. Created by Perch Energy’s internal policy team.
+- NY SUN Long Island + Upstate-Program-Manual: Program details for NY SUN's initiatives. Published by NYSERDA.
+- NYSEG Queue Order by Substation: Latest queue order by substation for NYSEG. Published by NYSEG itself.
+- Residential-SC-Program-Manual: Information on the residential solar credit program.
+- Net Metering rules
+- Value Stack Overview, Reference Guide: Published by NYSERDA.
 """
 
 
@@ -64,10 +66,9 @@ def send_message_get_response(assistant_id, user_message):
 
 
 def main(): 
-    # Initialize messages in session state if not present
+    # Initialize the thread in session state if not present
     if 'thread' not in st.session_state:
         st.session_state['thread'] = client.beta.threads.create().id
-    # Initialize messages in session state if not present
     if 'messages' not in st.session_state:
         st.session_state['messages'] = []
 
@@ -80,16 +81,22 @@ def main():
             with st.chat_message("assistant", avatar="☀️"):
                 st.write(msg["content"])
 
-    # Chat input for new message
-    user_input = st.chat_input(placeholder="Please ask me your question…")
+    # Disable input if a response is pending
+    disable_input = 'waiting' in st.session_state and st.session_state['waiting']
 
-    # When a message is sent through the chat input
-    if user_input:
+    # Chat input for new message
+    user_input = st.text_input("Please ask me your question…", disabled=disable_input)
+    send_button = st.button("Send", disabled=disable_input)
+
+    if send_button and user_input:
+        # Indicate waiting for response
+        st.session_state['waiting'] = True
+
         # Append the user message to the session state
         st.session_state['messages'].append({'role': 'user', 'content': user_input})
         # Display the user message
         with st.chat_message("user", avatar="🧑‍💻"):
-                st.write(user_input)
+            st.write(user_input)
 
         # Get the response from the assistant
         with st.spinner('Working on this for you now...'):
@@ -100,6 +107,8 @@ def main():
             with st.chat_message("assistant", avatar="☀️"):
                 st.write(response)
 
+        # Response received, allow new input
+        st.session_state['waiting'] = False
+
 if __name__ == "__main__":
     main()
-
