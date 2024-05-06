@@ -1,4 +1,4 @@
-
+s
 import streamlit as st
 from openai import OpenAI
 import time
@@ -92,7 +92,7 @@ def main():
         # Append the user message to the session state
         st.session_state['messages'].append({'role': 'user', 'content': user_input})
         # Display the user message
-        session_state['awaiting_response'] = True
+        st.session_state['awaiting_response'] = True
         user_input = st.chat_input(placeholder="Please ask me your question…", disabled = st.session_state['awaiting_response'] )
         with st.chat_message("user", avatar="🧑‍💻"):
                 st.write(user_input)    
@@ -105,7 +105,7 @@ def main():
             # Display the assistant's response
             with st.chat_message("assistant", avatar="☀️"):
                 st.write(response)
-            session_state['awaiting_response'] = False
+            st.session_state['awaiting_response'] = False
             user_input = st.chat_input(placeholder="Please ask me your question…", disabled = st.session_state['awaiting_response'] )
 
 if __name__ == "__main__":
