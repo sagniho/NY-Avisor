@@ -65,31 +65,49 @@ def send_message_get_response(assistant_id, user_message):
 
 
 
-def main():
-    if 'thread' not in st.session_state:
-        st.session_state['thread'] = client.beta.threads.create().id
-    if 'messages' not in st.session_state:
-        st.session_state['messages'] = []
+def main(): 
+    # Initialize messages in session state if not present
     if 'awaiting_response' not in st.session_state:
         st.session_state['awaiting_response'] = False
+    if 'thread' not in st.session_state:
+        st.session_state['thread'] = client.beta.threads.create().id
+    # Initialize messages in session state if not present
+    if 'messages' not in st.session_state:
+        st.session_state['messages'] = []
 
+    # Display previous chat messages
     for msg in st.session_state.messages:
-        st.chat_message(msg["content"], avatar="🧑‍💻" if msg['role'] == 'user' else "☀️")
+        if msg['role'] == 'user':
+            with st.chat_message("user", avatar="🧑‍💻"):
+                st.write(msg["content"])
+        else:
+            with st.chat_message("assistant", avatar="☀️"):
+                st.write(msg["content"])
 
-    if st.session_state['awaiting_response']:
-        st.info('Processing your request, please wait...')
-    else:
-        user_input = st.chat_input("Please ask me your question...", key="new_message")
-        if user_input is not None:
-            process_user_input(user_input)
+    # Chat input for new message
+    user_input = st.chat_input(placeholder="Please ask me your question…", disabled = st.session_state['awaiting_response'])
 
-def process_user_input(user_input):
-    st.session_state['awaiting_response'] = True
-    st.session_state.messages.append({'role': 'user', 'content': user_input})
-    response = send_message_get_response(ASSISTANT_ID, user_input)
-    st.session_state.messages.append({'role': 'assistant', 'content': response})
-    st.session_state['awaiting_response'] = False
-    st.experimental_rerun()
+    # When a message is sent through the chat input
+    if user_input:
+        # Append the user message to the session state
+        st.session_state['messages'].append({'role': 'user', 'content': user_input})
+        # Display the user message
+        session_state['awaiting_response'] = True
+        user_input = st.chat_input(placeholder="Please ask me your question…", disabled = st.session_state['awaiting_response'] )
+        with st.chat_message("user", avatar="🧑‍💻"):
+                st.write(user_input)    
+
+        # Get the response from the assistant
+        with st.spinner('Working on this for you now...'):
+            response = send_message_get_response(ASSISTANT_ID, user_input)
+            # Append the response to the session state
+            st.session_state['messages'].append({'role': 'assistant', 'content': response})
+            # Display the assistant's response
+            with st.chat_message("assistant", avatar="☀️"):
+                st.write(response)
+            session_state['awaiting_response'] = False
+            user_input = st.chat_input(placeholder="Please ask me your question…", disabled = st.session_state['awaiting_response'] )
 
 if __name__ == "__main__":
     main()
+
