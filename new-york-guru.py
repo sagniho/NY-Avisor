@@ -89,7 +89,7 @@ def main():
         st.session_state['generating_response'] = False
 
     # Chat input for new message
-    user_input = st.chat_input(placeholder="Please ask me your question…", key="user_input", disabled=st.session_state['generating_response'])
+    
 
     # When a message is sent through the chat input
     if user_input:
@@ -116,6 +116,8 @@ def main():
 
         # Set generating_response back to False to enable the input
         st.session_state['generating_response'] = False
+
+user_input = st.chat_input(placeholder="Please ask me your question…", key="user_input", disabled=st.session_state['generating_response'])
 
 if __name__ == "__main__":
     main()
