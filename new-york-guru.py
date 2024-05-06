@@ -66,6 +66,7 @@ def send_message_get_response(assistant_id, user_message):
 
 
 def main():
+    st.title("Interactive Document Analyzer")
     if 'thread' not in st.session_state:
         st.session_state['thread'] = client.beta.threads.create().id
     if 'messages' not in st.session_state:
@@ -74,32 +75,22 @@ def main():
         st.session_state['awaiting_response'] = False
 
     for msg in st.session_state.messages:
-        if msg['role'] == 'user':
-            with st.chat_message("user", avatar="🧑‍💻"):
-                st.write(msg["content"])
-        else:
-            with st.chat_message("assistant", avatar="☀️"):
-                st.write(msg["content"])
+        st.chat_message(msg["content"], avatar="🧑‍💻" if msg['role'] == 'user' else "☀️")
 
     if st.session_state['awaiting_response']:
-        st.info('Please wait, processing your request...')
+        st.info('Processing your request, please wait...')
     else:
-        user_input = st.chat_input("Please ask me your question…", on_change=on_new_message, args=(st.session_state,))
+        user_input = st.chat_input("Please ask me your question...", key="new_message")
+        if user_input is not None:
+            process_user_input(user_input)
 
-def on_new_message(session_state):
-    user_input = session_state['new_message']
-    if user_input:
-        session_state['awaiting_response'] = True
-        session_state['messages'].append({'role': 'user', 'content': user_input})
-        st.experimental_rerun()
-
-        # Simulate delay for processing
-        with st.spinner('Working on this for you now...'):
-            time.sleep(1)  # Simulate a processing delay
-            response = send_message_get_response(ASSISTANT_ID, user_input)
-            session_state['messages'].append({'role': 'assistant', 'content': response})
-            session_state['awaiting_response'] = False
-            st.experimental_rerun()
+def process_user_input(user_input):
+    st.session_state['awaiting_response'] = True
+    st.session_state.messages.append({'role': 'user', 'content': user_input})
+    response = send_message_get_response(ASSISTANT_ID, user_input)
+    st.session_state.messages.append({'role': 'assistant', 'content': response})
+    st.session_state['awaiting_response'] = False
+    st.experimental_rerun()
 
 if __name__ == "__main__":
     main()
