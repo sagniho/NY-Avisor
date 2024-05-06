@@ -70,6 +70,8 @@ def main():
         st.session_state['thread'] = client.beta.threads.create().id
     if 'messages' not in st.session_state:
         st.session_state['messages'] = []
+    if 'awaiting_response' not in st.session_state:
+        st.session_state['awaiting_response'] = False
 
     for msg in st.session_state.messages:
         if msg['role'] == 'user':
@@ -79,22 +81,24 @@ def main():
             with st.chat_message("assistant", avatar="☀️"):
                 st.write(msg["content"])
 
-    # Disable input if awaiting response
-    if not st.session_state.get('awaiting_response', False):
-        user_input = st.chat_input(placeholder="Please ask me your question…", key='new_message')
-        if user_input:
-            st.session_state['awaiting_response'] = True
-            st.session_state.messages.append({'role': 'user', 'content': user_input})
-            with st.chat_message("user", avatar="🧑‍💻"):
-                st.write(user_input)
+    if st.session_state['awaiting_response']:
+        st.info('Please wait, processing your request...')
+    else:
+        user_input = st.chat_input("Please ask me your question…", on_change=on_new_message, args=(st.session_state,))
 
-            with st.spinner('Working on this for you now...'):
-                response = send_message_get_response(ASSISTANT_ID, user_input)
-                st.session_state.messages.append({'role': 'assistant', 'content': response})
-                with st.chat_message("assistant", avatar="☀️"):
-                    st.write(response)
-                
-            st.session_state['awaiting_response'] = False
+def on_new_message(session_state):
+    user_input = session_state['new_message']
+    if user_input:
+        session_state['awaiting_response'] = True
+        session_state['messages'].append({'role': 'user', 'content': user_input})
+        st.experimental_rerun()
+
+        # Simulate delay for processing
+        with st.spinner('Working on this for you now...'):
+            time.sleep(1)  # Simulate a processing delay
+            response = send_message_get_response(ASSISTANT_ID, user_input)
+            session_state['messages'].append({'role': 'assistant', 'content': response})
+            session_state['awaiting_response'] = False
             st.experimental_rerun()
 
 if __name__ == "__main__":
