@@ -67,7 +67,8 @@ def send_message_get_response(assistant_id, user_message):
     # Run the assistant
     run = client.beta.threads.runs.create(
         thread_id=thread_id,
-        assistant_id=assistant_id
+        assistant_id=assistant_id,
+        tool_choice="required"
     )
 
     # Retrieve the assistant's response
