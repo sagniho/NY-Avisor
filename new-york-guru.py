@@ -122,7 +122,7 @@ def main():
                     "What are the latest NY solar incentives?",
                     "How do I qualify for NY-Sun MW Block?", 
                     "Explain Value of Distributed Energy Resources (VDER)",
-                    "What is Con-Ed's solar hosting capacity process?"
+                    "Tell me about NYSUN Conedison."
                 ]
                 cols = st.columns(len(quick_asks), gap="small")
                 for col, ask in zip(cols, quick_asks):
