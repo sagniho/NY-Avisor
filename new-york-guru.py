@@ -102,18 +102,56 @@ def main():
                 with st.chat_message("assistant", avatar="☀️"):
                     st.write(msg["content"])
 
+        # Quick ask buttons setup
+        if 'quick_ask_shown' not in st.session_state:
+            st.session_state['quick_ask_shown'] = True
+
+        if 'quick_ask_flag' not in st.session_state:
+            st.session_state['quick_ask_flag'] = 0
+
+        if 'quick_ask_q' not in st.session_state:
+            st.session_state['quick_ask_q'] = ''
+
+        quick_ask_placeholder = st.empty()
+
+        if st.session_state['quick_ask_shown']:
+            with quick_ask_placeholder.container():
+                st.write("\n\n\n\n\n\n\n\n\n\n")
+                st.write("Some questions you can ask me:")
+                quick_asks = [
+                    "What are the latest NY solar incentives?",
+                    "How do I qualify for NY-Sun MW Block?", 
+                    "Explain Value of Distributed Energy Resources (VDER)",
+                    "What is Con-Ed's solar hosting capacity process?"
+                ]
+                cols = st.columns(len(quick_asks), gap="small")
+                for col, ask in zip(cols, quick_asks):
+                    with col:
+                        if st.button(ask):
+                            st.session_state['quick_ask_q'] = ask
+                            st.session_state['quick_ask_shown'] = False
+                            st.session_state['quick_ask_flag'] = 1
+
+        if st.session_state['quick_ask_flag'] == 1:
+            quick_ask_placeholder.empty()
+            process_user_input(st.session_state['quick_ask_q'])
+
         user_input = st.chat_input(placeholder="Please ask me your question…")
 
         if user_input:
-            st.session_state['messages'].append({'role': 'user', 'content': user_input})
-            with st.chat_message("user", avatar="🧑‍💻"):
-                    st.write(user_input)
+            quick_ask_placeholder.empty()
+            process_user_input(user_input)
 
-            with st.spinner('Working on this for you now...'):
-                response = send_message_get_response(ADVISORS[selected_advisor]["id"], user_input)
-                st.session_state['messages'].append({'role': 'assistant', 'content': response})
-                with st.chat_message("assistant", avatar="☀️"):
-                    st.write(response)
+def process_user_input(user_input):
+    st.session_state['messages'].append({'role': 'user', 'content': user_input})
+    with st.chat_message("user", avatar="🧑‍💻"):
+        st.write(user_input)
+
+    with st.spinner('Working on this for you now...'):
+        response = send_message_get_response(ADVISORS[st.session_state.selected_advisor]["id"], user_input)
+        st.session_state['messages'].append({'role': 'assistant', 'content': response})
+        with st.chat_message("assistant", avatar="☀️"):
+            st.write(response)
 
 if __name__ == "__main__":
-    main()
+    main().
