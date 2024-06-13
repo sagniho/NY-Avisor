@@ -85,6 +85,8 @@ def main():
     selected_advisor = st.sidebar.selectbox("Choose an advisor", list(ADVISORS.keys()))
     st.session_state.selected_advisor = selected_advisor
 
+    st.sidebar.markdown("[Provide Feedback](https://wkf.ms/3XpL0jg)", unsafe_allow_html=True)
+
     if "selected_advisor" not in st.session_state:
         display_advisors()
     else:
@@ -142,6 +144,9 @@ def main():
         if user_input:
             quick_ask_placeholder.empty()
             process_user_input(user_input)
+
+    st.markdown("---")
+    st.markdown("[Provide Feedback](https://wkf.ms/3XpL0jg)", unsafe_allow_html=True)
 
 def process_user_input(user_input):
     st.session_state['messages'].append({'role': 'user', 'content': user_input})
